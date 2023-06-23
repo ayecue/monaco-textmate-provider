@@ -1,5 +1,5 @@
 {
-    "name": "monaco-textmate",
+    "name": "monaco-textmate-provider",
     "version": "1.0.0",
     "description": "Language and Theme provider for Textmate within Monaco",
     "main": "dist/index",
@@ -15,7 +15,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/ayecue/monaco-textmate.git"
+        "url": "git+https://github.com/ayecue/monaco-textmate-provider.git"
     },
     "author": {
         "name": "ayecue",
@@ -23,9 +23,9 @@
     },
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/ayecue/monaco-textmate/issues"
+        "url": "https://github.com/ayecue/monaco-textmate-provider/issues"
     },
-    "homepage": "https://github.com/ayecue/monaco-textmate#readme",
+    "homepage": "https://github.com/ayecue/monaco-textmate-provider#readme",
     "peerDependencies": {
         "monaco-editor": ">= 0.21.0 < 1"
     },
