@@ -9,7 +9,8 @@ export class LanguageConfigurationFile {
 
   static async loadFrom(source: URL) {
     const res = await fetch(source);
-    const languageConfiguration = await res.json() as monaco.languages.LanguageConfiguration;
+    const languageConfiguration =
+      (await res.json()) as monaco.languages.LanguageConfiguration;
 
     return new LanguageConfigurationFile({ languageConfiguration });
   }

@@ -4,14 +4,11 @@ import {
   createOnigString,
   loadWASM
 } from 'vscode-oniguruma';
-import {
-  INITIAL,
-  Registry,
-  StackElement
-} from 'vscode-textmate';
-import { GrammarSourceMap } from "./language-provider/grammar-sources";
-import { TMLanguageFile } from './language-provider/tm-language-file';
+import { INITIAL, Registry, StackElement } from 'vscode-textmate';
+
+import { GrammarSourceMap } from './language-provider/grammar-sources';
 import { LanguageConfigurationFile } from './language-provider/language-configuration-file';
+import { TMLanguageFile } from './language-provider/tm-language-file';
 
 export interface LanguageProviderOptions {
   monaco: typeof monaco;
@@ -38,12 +35,15 @@ export class LanguageProvider {
     this.monaco = options.monaco;
     this.wasm = options.wasm;
     this.grammarSourceMap = options.grammarSourceMap;
-    this.scopeToSourceMapRef = Object.entries(options.grammarSourceMap).reduce((result, [key, value]) => {
-      return {
-        ...result,
-        [value.scopeName]: key
-      }
-    }, {});
+    this.scopeToSourceMapRef = Object.entries(options.grammarSourceMap).reduce(
+      (result, [key, value]) => {
+        return {
+          ...result,
+          [value.scopeName]: key
+        };
+      },
+      {}
+    );
   }
 
   public async getRegistry() {
@@ -58,7 +58,9 @@ export class LanguageProvider {
       if (item.extra) {
         this.monaco.languages.register(item.extra);
       }
-      const dispose = this.monaco.languages.onLanguage(languageId, () => this.registerLanguage(languageId));
+      const dispose = this.monaco.languages.onLanguage(languageId, () =>
+        this.registerLanguage(languageId)
+      );
       this.disposes.push(dispose);
     }
   }
@@ -77,7 +79,9 @@ export class LanguageProvider {
         const key = this.scopeToSourceMapRef[scopeName];
         const grammarSource = this.grammarSourceMap[key];
         if (grammarSource) {
-          const tmLanguageFile = await TMLanguageFile.loadFrom(grammarSource.tmLanguageFile);
+          const tmLanguageFile = await TMLanguageFile.loadFrom(
+            grammarSource.tmLanguageFile
+          );
           return tmLanguageFile.toRaw();
         }
         return Promise.resolve(null);
@@ -117,7 +121,10 @@ export class LanguageProvider {
   ): Promise<monaco.languages.LanguageConfiguration | null> {
     const grammar = this.grammarSourceMap[languageId];
     if (grammar.languageConfigurationFile) {
-      const languageConfigurationFile = await LanguageConfigurationFile.loadFrom(grammar.languageConfigurationFile);
+      const languageConfigurationFile =
+        await LanguageConfigurationFile.loadFrom(
+          grammar.languageConfigurationFile
+        );
       return languageConfigurationFile.toRaw();
     }
     return Promise.resolve(null);

@@ -1,7 +1,4 @@
-import {
-  IRawGrammar,
-  parseRawGrammar
-} from 'vscode-textmate';
+import { IRawGrammar, parseRawGrammar } from 'vscode-textmate';
 
 export interface TMLanguageFileOptions {
   grammar: IRawGrammar;

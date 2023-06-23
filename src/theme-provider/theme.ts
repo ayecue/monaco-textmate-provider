@@ -14,7 +14,7 @@ export interface ThemePayload {
   name: string;
   type: string;
   colors?: ThemePayloadColorMap;
-  tokenColors: ThemePayloadTokenColor[]
+  tokenColors: ThemePayloadTokenColor[];
 }
 
 export interface ThemeOptions {

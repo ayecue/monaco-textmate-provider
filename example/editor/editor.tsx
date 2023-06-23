@@ -26,10 +26,5 @@ export default function Editor({
     onCreate(instance);
   }, []);
 
-  return (
-    <div
-      className='editor-ide'
-      ref={editorRef}
-    ></div>
-  );
+  return <div className="editor-ide" ref={editorRef}></div>;
 }

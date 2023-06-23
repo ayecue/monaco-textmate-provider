@@ -1,6 +1,7 @@
 import monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import { Registry } from 'vscode-textmate';
-import { Theme } from "./theme-provider/theme";
+
+import { Theme } from './theme-provider/theme';
 
 export interface ThemeProviderOptions {
   registry: Registry;

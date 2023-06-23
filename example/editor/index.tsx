@@ -3,8 +3,8 @@ import Monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import React, { useEffect, useState } from 'react';
 
 import { LanguageProvider } from '../../src/language-provider';
-import Editor from './editor';
 import { ThemeProvider } from '../../src/theme-provider';
+import Editor from './editor';
 
 export interface EditorContext {
   instance?: Monaco.editor.IStandaloneCodeEditor;
@@ -16,9 +16,7 @@ export interface EditorRootOptions {
   onCreate?: (context: EditorContext) => void;
 }
 
-export function EditorRoot({
-  onCreate
-}: EditorRootOptions) {
+export function EditorRoot({ onCreate }: EditorRootOptions) {
   const [editorContext, setEditorContext] = useState<EditorContext | null>(
     null
   );
@@ -28,21 +26,29 @@ export function EditorRoot({
 
     const languageProvider = new LanguageProvider({
       monaco: resolvedMonaco,
-      wasm: new URL('https://unpkg.com/vscode-oniguruma@1.7.0/release/onig.wasm'),
+      wasm: new URL(
+        'https://unpkg.com/vscode-oniguruma@1.7.0/release/onig.wasm'
+      ),
       grammarSourceMap: {
         greyscript: {
           scopeName: 'source.src',
-          tmLanguageFile: new URL('https://unpkg.com/greyscript-textmate@1.0.6/dist/greyscript.tmLanguage.json'),
-          languageConfigurationFile: new URL('https://unpkg.com/greyscript-textmate@1.0.6/dist/greyscriptLanguageConfig.json'),
-        },
-      },
+          tmLanguageFile: new URL(
+            'https://unpkg.com/greyscript-textmate@1.0.6/dist/greyscript.tmLanguage.json'
+          ),
+          languageConfigurationFile: new URL(
+            'https://unpkg.com/greyscript-textmate@1.0.6/dist/greyscriptLanguageConfig.json'
+          )
+        }
+      }
     });
-    
+
     const themeProvider = new ThemeProvider({
       monaco: resolvedMonaco,
       registry: (await languageProvider.getRegistry())!,
       themeSources: {
-        default: new URL('https://unpkg.com/greyscript-textmate@1.0.6/dist/greyscript.theme.json'),
+        default: new URL(
+          'https://unpkg.com/greyscript-textmate@1.0.6/dist/greyscript.theme.json'
+        )
       }
     });
 
