@@ -1,0 +1,14 @@
+body {
+	font-family: monospace;
+	background-color: #333;
+	margin: 0;
+}
+
+.editor-ide {
+	position: fixed;
+	width: 100%;
+	top: 0px;
+	bottom: 0px;
+	border: 1px solid #000;
+	background-color: #000;
+}
