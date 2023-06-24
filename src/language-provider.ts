@@ -4,7 +4,7 @@ import {
   createOnigString,
   loadWASM
 } from 'vscode-oniguruma';
-import { INITIAL, Registry, StackElement } from 'vscode-textmate';
+import { INITIAL, Registry, StateStack } from 'vscode-textmate';
 
 import { GrammarSourceMap } from './language-provider/grammar-sources';
 import { LanguageConfigurationFile } from './language-provider/language-configuration-file';
@@ -148,7 +148,7 @@ export class LanguageProvider {
       ): monaco.languages.IEncodedLineTokens {
         const tokenizeLineResult2 = grammar.tokenizeLine2(
           line,
-          state as StackElement
+          state as StateStack
         );
         const { tokens, ruleStack: endState } = tokenizeLineResult2;
         return { tokens, endState };

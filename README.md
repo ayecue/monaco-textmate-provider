@@ -1,4 +1,4 @@
-# monaco-textmate
+# monaco-textmate-provider
 
 Language Provider and Theme Provider for Textmate within monaco.
 
@@ -36,6 +36,8 @@ const onLoad = async (resolvedMonaco: typeof Monaco) => {
   themeProvider.setTheme('default');
 };
 ```
+
+For additional usage information, you can take a look at the provided [example code](/example).
 
 # Credits
 
