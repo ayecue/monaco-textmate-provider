@@ -51,6 +51,7 @@ export class ThemeProvider {
 
   private disposeCSS() {
     this.style?.remove();
+    this.style = null;
   }
 
   public injectCSS() {
