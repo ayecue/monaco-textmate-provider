@@ -76,6 +76,7 @@ export class ThemeProvider {
 
   public createStyleElementForColorsCSS() {
     const style = document.createElement('style');
+    style.id = 'monaco-textmate-colors-css';
     const monacoColors = document.querySelector('.monaco-colors');
 
     if (monacoColors) {
@@ -86,5 +87,9 @@ export class ThemeProvider {
     }
 
     return style;
+  }
+
+  public dispose() {
+    document.querySelector('#monaco-textmate-colors-css')?.remove();
   }
 }
