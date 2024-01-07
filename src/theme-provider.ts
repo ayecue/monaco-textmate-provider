@@ -15,6 +15,7 @@ export class ThemeProvider {
   private registry: Registry;
   private monaco: typeof monaco;
   private currentTheme: string | null = null;
+  private style: HTMLStyleElement | null = null;
 
   constructor(options: ThemeProviderOptions) {
     this.registry = options.registry;
@@ -48,6 +49,11 @@ export class ThemeProvider {
     return theme;
   }
 
+  private disposeCSS() {
+    this.style?.remove();
+    this.style = null;
+  }
+
   public injectCSS() {
     const cssColors = this.registry.getColorMap();
     const { Color } = window.require('vs/base/common/color');
@@ -61,14 +67,17 @@ export class ThemeProvider {
 
     TokenizationRegistry.setColorMap(colorMap);
 
-    const css = generateTokensCSSForColorMap(colorMap);
-    const style = this.createStyleElementForColorsCSS();
+    this.disposeCSS();
 
-    style.innerHTML = css;
+    const css = generateTokensCSSForColorMap(colorMap);
+    this.style = this.createStyleElementForColorsCSS();
+
+    this.style.innerHTML = css;
   }
 
   public createStyleElementForColorsCSS() {
     const style = document.createElement('style');
+    style.id = 'monaco-textmate-colors-css';
     const monacoColors = document.querySelector('.monaco-colors');
 
     if (monacoColors) {
@@ -79,5 +88,9 @@ export class ThemeProvider {
     }
 
     return style;
+  }
+
+  public dispose() {
+    document.querySelector('#monaco-textmate-colors-css')?.remove();
   }
 }
