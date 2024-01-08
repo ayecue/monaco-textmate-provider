@@ -1,5 +1,5 @@
 import Monaco from 'monaco-editor/esm/vs/editor/editor.api';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 export interface EditorOptions {
   model: Monaco.editor.ITextModel;
@@ -14,17 +14,25 @@ export default function Editor({
   onCreate,
   className
 }: EditorOptions) {
+  const [instance, setInstance] = useState<Monaco.editor.IStandaloneCodeEditor | null>(null);
   const editorRef = useRef(null);
 
   useEffect(() => {
-    const instance = monaco.editor.create(editorRef.current!, {
+    const newInstance = monaco.editor.create(editorRef.current!, {
       model,
       automaticLayout: true,
       theme: 'vs-dark'
     });
 
-    onCreate(instance);
+    onCreate(newInstance);
+    setInstance(newInstance);
   }, []);
+
+  useEffect(() => {
+    if (instance !== null) {
+      instance.setModel(model);
+    }
+  }, [instance, model]);
 
   return <div className="editor-ide" ref={editorRef}></div>;
 }
