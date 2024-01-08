@@ -69,7 +69,7 @@
         "provider"
     ],
     "dependencies": {
-        "vscode-oniguruma": "^1.7.0",
+        "vscode-oniguruma": "^2.0.0",
         "vscode-textmate": "^9.0.0"
     }
 }
