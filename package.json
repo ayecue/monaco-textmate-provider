@@ -1,6 +1,6 @@
 {
     "name": "monaco-textmate-provider",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "description": "Language and Theme provider for Textmate within Monaco",
     "main": "dist/index",
     "typings": "dist/index",
@@ -69,7 +69,7 @@
         "provider"
     ],
     "dependencies": {
-        "vscode-oniguruma": "^1.7.0",
+        "vscode-oniguruma": "^2.0.0",
         "vscode-textmate": "^9.0.0"
     }
 }

@@ -12,3 +12,17 @@ body {
 	border: 1px solid #000;
 	background-color: #000;
 }
+
+.editor-language {
+	z-index: 999;
+	bottom: 10px;
+	left: 10px;
+	position: absolute;
+}
+
+.editor-theme {
+	z-index: 999;
+	bottom: 10px;
+	right: 10px;
+	position: absolute;
+}

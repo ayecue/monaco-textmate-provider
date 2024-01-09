@@ -15,6 +15,7 @@ export class ThemeProvider {
   private registry: Registry;
   private monaco: typeof monaco;
   private currentTheme: string | null = null;
+  private style: HTMLStyleElement | null = null;
 
   constructor(options: ThemeProviderOptions) {
     this.registry = options.registry;
@@ -23,21 +24,14 @@ export class ThemeProvider {
   }
 
   public async setTheme(id: string) {
-    if (this.themes.has(id)) {
-      this.setEditorTheme(id);
+    if (this.currentTheme === id) {
       return;
     }
-    const theme = await this.loadTheme(id);
+    const theme = this.themes.has(id) ? this.themes.get(id)! : await this.loadTheme(id);
     this.registry.setTheme(theme.toRawTheme());
     this.monaco.editor.setTheme(id);
+    this.currentTheme = id;
     this.injectCSS();
-  }
-
-  public setEditorTheme(id: string) {
-    if (this.currentTheme !== id) {
-      this.monaco.editor.setTheme(id);
-      this.currentTheme = id;
-    }
   }
 
   private async loadTheme(id: string): Promise<Theme> {
@@ -61,10 +55,12 @@ export class ThemeProvider {
 
     TokenizationRegistry.setColorMap(colorMap);
 
-    const css = generateTokensCSSForColorMap(colorMap);
-    const style = this.createStyleElementForColorsCSS();
+    this.dispose();
 
-    style.innerHTML = css;
+    const css = generateTokensCSSForColorMap(colorMap);
+    this.style = this.createStyleElementForColorsCSS();
+
+    this.style.innerHTML = css;
   }
 
   public createStyleElementForColorsCSS() {
@@ -79,5 +75,10 @@ export class ThemeProvider {
     }
 
     return style;
+  }
+
+  public dispose() {
+    this.style?.remove();
+    this.style = null;
   }
 }
