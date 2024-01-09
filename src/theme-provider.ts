@@ -24,21 +24,14 @@ export class ThemeProvider {
   }
 
   public async setTheme(id: string) {
-    if (this.themes.has(id)) {
-      this.setEditorTheme(id);
+    if (this.currentTheme === id) {
       return;
     }
-    const theme = await this.loadTheme(id);
+    const theme = this.themes.has(id) ? this.themes.get(id)! : await this.loadTheme(id);
     this.registry.setTheme(theme.toRawTheme());
     this.monaco.editor.setTheme(id);
+    this.currentTheme = id;
     this.injectCSS();
-  }
-
-  public setEditorTheme(id: string) {
-    if (this.currentTheme !== id) {
-      this.monaco.editor.setTheme(id);
-      this.currentTheme = id;
-    }
   }
 
   private async loadTheme(id: string): Promise<Theme> {
@@ -47,11 +40,6 @@ export class ThemeProvider {
     this.monaco.editor.defineTheme(id, theme.toThemeData());
     this.themes.set(id, theme);
     return theme;
-  }
-
-  private disposeCSS() {
-    this.style?.remove();
-    this.style = null;
   }
 
   public injectCSS() {
@@ -67,7 +55,7 @@ export class ThemeProvider {
 
     TokenizationRegistry.setColorMap(colorMap);
 
-    this.disposeCSS();
+    this.dispose();
 
     const css = generateTokensCSSForColorMap(colorMap);
     this.style = this.createStyleElementForColorsCSS();
@@ -77,7 +65,6 @@ export class ThemeProvider {
 
   public createStyleElementForColorsCSS() {
     const style = document.createElement('style');
-    style.id = 'monaco-textmate-colors-css';
     const monacoColors = document.querySelector('.monaco-colors');
 
     if (monacoColors) {
@@ -91,6 +78,7 @@ export class ThemeProvider {
   }
 
   public dispose() {
-    document.querySelector('#monaco-textmate-colors-css')?.remove();
+    this.style?.remove();
+    this.style = null;
   }
 }
