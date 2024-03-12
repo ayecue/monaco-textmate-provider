@@ -10,6 +10,8 @@ export interface ThemeProviderOptions {
 }
 
 export class ThemeProvider {
+  static MONACO_STYLE_SELECTOR = '.monaco-colors' as const;
+
   private themes = new Map<string, Theme>();
   private themeSources: Record<string, URL>;
   private registry: Registry;
@@ -21,6 +23,12 @@ export class ThemeProvider {
     this.registry = options.registry;
     this.monaco = options.monaco;
     this.themeSources = options.themeSources;
+
+    this.monaco.editor.onDidCreateEditor(this.injectCSS.bind(this));
+  }
+
+  public getThemeId(): string {
+    return this.currentTheme;
   }
 
   public async setTheme(id: string) {
@@ -42,7 +50,21 @@ export class ThemeProvider {
     return theme;
   }
 
+  private getMonacoStyle(): Element | null {
+    return document.querySelector(ThemeProvider.MONACO_STYLE_SELECTOR) ?? null;
+  }
+
   public injectCSS() {
+    if (this.currentTheme === null) {
+      return;
+    }
+
+    const monacoColors = this.getMonacoStyle();
+
+    if (monacoColors === null) {
+      return;
+    }
+
     const cssColors = this.registry.getColorMap();
     const { Color } = window.require('vs/base/common/color');
     const { TokenizationRegistry } = window.require(
@@ -57,24 +79,10 @@ export class ThemeProvider {
 
     this.dispose();
 
-    const css = generateTokensCSSForColorMap(colorMap);
-    this.style = this.createStyleElementForColorsCSS();
+    this.style = document.createElement('style');
+    this.style.innerHTML = generateTokensCSSForColorMap(colorMap);
 
-    this.style.innerHTML = css;
-  }
-
-  public createStyleElementForColorsCSS() {
-    const style = document.createElement('style');
-    const monacoColors = document.querySelector('.monaco-colors');
-
-    if (monacoColors) {
-      monacoColors.parentElement?.insertBefore(style, monacoColors.nextSibling);
-    } else {
-      const { head = document.querySelector('head') } = document;
-      head?.appendChild(style);
-    }
-
-    return style;
+    monacoColors.parentElement!.insertBefore(this.style, monacoColors.nextSibling);
   }
 
   public dispose() {
