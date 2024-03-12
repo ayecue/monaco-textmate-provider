@@ -86,7 +86,7 @@ export class ThemeProvider {
       });
       this.monacoColorObserver.observe(header, { childList: true });
 
-      // temporarely append style
+      // temporarily append style
       header?.appendChild(style);
     }
 
