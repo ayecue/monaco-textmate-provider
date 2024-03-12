@@ -52,13 +52,13 @@ export class LanguageProvider {
     return this.registry;
   }
 
-  private async bindLanguage() {
-    for (const [languageId, item] of Object.entries(this.grammarSourceMap)) {
+  private async bindLanguages() {
+    await Promise.all(Object.entries(this.grammarSourceMap).map(([languageId, item]) => {
       if (item.extra) {
         this.monaco.languages.register(item.extra);
       }
-      await this.registerLanguage(languageId);
-    }
+      return this.registerLanguage(languageId);
+    }));
   }
 
   private async loadRegistry() {
@@ -86,7 +86,7 @@ export class LanguageProvider {
 
     this.registry = registry;
 
-    await this.bindLanguage();
+    await this.bindLanguages();
   }
 
   private async registerLanguage(languageId: string) {

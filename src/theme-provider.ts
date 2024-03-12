@@ -17,14 +17,14 @@ export class ThemeProvider {
   private registry: Registry;
   private monaco: typeof monaco;
   private currentTheme: string | null = null;
-
-  private monacoColorObserver: MutationObserver | null = null;
   private style: HTMLStyleElement | null = null;
 
   constructor(options: ThemeProviderOptions) {
     this.registry = options.registry;
     this.monaco = options.monaco;
     this.themeSources = options.themeSources;
+
+    this.monaco.editor.onDidCreateEditor(this.injectCSS.bind(this));
   }
 
   public getThemeId(): string {
@@ -50,7 +50,21 @@ export class ThemeProvider {
     return theme;
   }
 
+  private getMonacoStyle(): Element | null {
+    return document.querySelector(ThemeProvider.MONACO_STYLE_SELECTOR) ?? null;
+  }
+
   public injectCSS() {
+    if (this.currentTheme === null) {
+      return;
+    }
+
+    const monacoColors = this.getMonacoStyle();
+
+    if (monacoColors === null) {
+      return;
+    }
+
     const cssColors = this.registry.getColorMap();
     const { Color } = window.require('vs/base/common/color');
     const { TokenizationRegistry } = window.require(
@@ -65,37 +79,13 @@ export class ThemeProvider {
 
     this.dispose();
 
-    const css = generateTokensCSSForColorMap(colorMap);
-    this.style = this.createStyleElementForColorsCSS();
-    this.style.innerHTML = css;
-  }
+    this.style = document.createElement('style');
+    this.style.innerHTML = generateTokensCSSForColorMap(colorMap);
 
-  public createStyleElementForColorsCSS() {
-    const style = document.createElement('style');
-    const monacoColors = document.querySelector(ThemeProvider.MONACO_STYLE_SELECTOR);
-
-    if (monacoColors) {
-      monacoColors.parentElement?.insertBefore(style, monacoColors.nextSibling);
-    } else {
-      const header = document.querySelector('head');
-
-      // observe header for .monaco-colors appearance to reinject styles
-      this.monacoColorObserver = new MutationObserver(() => {
-        const monacoColors = document.querySelector(ThemeProvider.MONACO_STYLE_SELECTOR);
-        if (monacoColors) this.injectCSS()
-      });
-      this.monacoColorObserver.observe(header, { childList: true });
-
-      // temporarily append style
-      header?.appendChild(style);
-    }
-
-    return style;
+    monacoColors.parentElement!.insertBefore(this.style, monacoColors.nextSibling);
   }
 
   public dispose() {
-    this.monacoColorObserver?.disconnect();
-    this.monacoColorObserver = null;
     this.style?.remove();
     this.style = null;
   }
