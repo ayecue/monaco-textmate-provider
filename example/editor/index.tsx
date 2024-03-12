@@ -44,8 +44,6 @@ export function EditorRoot({ onCreate }: EditorRootOptions) {
       language
     );
 
-    console.log(model);
-
     setEditorContext({
       ...editorContext,
       model
@@ -104,12 +102,12 @@ export function EditorRoot({ onCreate }: EditorRootOptions) {
       }
     });
 
-    const model = resolvedMonaco.editor.createModel(
-      'print("hello world")',
-      'greyscript'
-    );
+    await themeProvider.setTheme('default');
 
-    themeProvider.setTheme('default');
+    const model = resolvedMonaco.editor.createModel(
+      'function tester() { \n console.log("hello world"); \n}',
+      'javascript'
+    );
 
     setEditorContext({
       monaco: resolvedMonaco,
@@ -128,11 +126,11 @@ export function EditorRoot({ onCreate }: EditorRootOptions) {
 
   return (
     <div className="editor-root">
-      <select className="editor-language" onChange={onLanguageChange}>
+      <select className="editor-language" onChange={onLanguageChange} defaultValue={editorContext.model.getLanguageId()}>
         <option value="greyscript">GreyScript</option>
         <option value="javascript">JavaScript</option>
       </select>
-      <select className="editor-theme" onChange={onThemeChange}>
+      <select className="editor-theme" onChange={onThemeChange} defaultValue={editorContext.themeProvider.getThemeId()}>
         <option value="default">Default</option>
         <option value="github">GitHub</option>
       </select>

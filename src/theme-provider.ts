@@ -10,17 +10,25 @@ export interface ThemeProviderOptions {
 }
 
 export class ThemeProvider {
+  static MONACO_STYLE_SELECTOR = '.monaco-colors' as const;
+
   private themes = new Map<string, Theme>();
   private themeSources: Record<string, URL>;
   private registry: Registry;
   private monaco: typeof monaco;
   private currentTheme: string | null = null;
+
+  private monacoColorObserver: MutationObserver | null = null;
   private style: HTMLStyleElement | null = null;
 
   constructor(options: ThemeProviderOptions) {
     this.registry = options.registry;
     this.monaco = options.monaco;
     this.themeSources = options.themeSources;
+  }
+
+  public getThemeId(): string {
+    return this.currentTheme;
   }
 
   public async setTheme(id: string) {
@@ -59,25 +67,35 @@ export class ThemeProvider {
 
     const css = generateTokensCSSForColorMap(colorMap);
     this.style = this.createStyleElementForColorsCSS();
-
     this.style.innerHTML = css;
   }
 
   public createStyleElementForColorsCSS() {
     const style = document.createElement('style');
-    const monacoColors = document.querySelector('.monaco-colors');
+    const monacoColors = document.querySelector(ThemeProvider.MONACO_STYLE_SELECTOR);
 
     if (monacoColors) {
       monacoColors.parentElement?.insertBefore(style, monacoColors.nextSibling);
     } else {
-      const { head = document.querySelector('head') } = document;
-      head?.appendChild(style);
+      const header = document.querySelector('head');
+
+      // observe header for .monaco-colors appearance to reinject styles
+      this.monacoColorObserver = new MutationObserver(() => {
+        const monacoColors = document.querySelector(ThemeProvider.MONACO_STYLE_SELECTOR);
+        if (monacoColors) this.injectCSS()
+      });
+      this.monacoColorObserver.observe(header, { childList: true });
+
+      // temporarely append style
+      header?.appendChild(style);
     }
 
     return style;
   }
 
   public dispose() {
+    this.monacoColorObserver?.disconnect();
+    this.monacoColorObserver = null;
     this.style?.remove();
     this.style = null;
   }

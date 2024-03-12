@@ -29,7 +29,6 @@ export class LanguageProvider {
   private registry: Registry | null = null;
   private grammarSourceMap: GrammarSourceMap;
   private scopeToSourceMapRef: Record<string, string>;
-  private disposes: monaco.IDisposable[] = [];
 
   constructor(options: LanguageProviderOptions) {
     this.monaco = options.monaco;
@@ -53,15 +52,12 @@ export class LanguageProvider {
     return this.registry;
   }
 
-  private bindLanguage() {
+  private async bindLanguage() {
     for (const [languageId, item] of Object.entries(this.grammarSourceMap)) {
       if (item.extra) {
         this.monaco.languages.register(item.extra);
       }
-      const dispose = this.monaco.languages.onLanguage(languageId, () =>
-        this.registerLanguage(languageId)
-      );
-      this.disposes.push(dispose);
+      await this.registerLanguage(languageId);
     }
   }
 
@@ -90,7 +86,7 @@ export class LanguageProvider {
 
     this.registry = registry;
 
-    this.bindLanguage();
+    await this.bindLanguage();
   }
 
   private async registerLanguage(languageId: string) {
@@ -173,7 +169,6 @@ export class LanguageProvider {
   }
 
   public dispose() {
-    this.disposes.forEach((d) => d.dispose());
     this.registry?.dispose();
   }
 }

@@ -24,6 +24,8 @@ export interface ThemeOptions {
 }
 
 export class Theme {
+  static BASE_THEME = 'vs-dark' as const;
+
   private name: string;
   private settings: ThemePayloadTokenColor[];
   private colors: ThemePayloadColorMap;
@@ -60,7 +62,7 @@ export class Theme {
 
   toThemeData(): monaco.editor.IStandaloneThemeData {
     return {
-      base: 'vs-dark',
+      base: Theme.BASE_THEME,
       inherit: true,
       rules: [
         {
