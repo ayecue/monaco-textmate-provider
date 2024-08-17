@@ -1,4 +1,10 @@
 import monaco from 'monaco-editor/esm/vs/editor/editor.api';
+// @ts-expect-error
+import { Color } from 'monaco-editor/esm/vs/base/common/color';
+// @ts-expect-error
+import { TokenizationRegistry } from 'monaco-editor/esm/vs/editor/common/languages';
+// @ts-expect-error
+import { generateTokensCSSForColorMap } from 'monaco-editor/esm/vs/editor/common/languages/supports/tokenization';
 import { Registry } from 'vscode-textmate';
 
 import { Theme } from './theme-provider/theme';
@@ -66,13 +72,6 @@ export class ThemeProvider {
     }
 
     const cssColors = this.registry.getColorMap();
-    const { Color } = window.require('vs/base/common/color');
-    const { TokenizationRegistry } = window.require(
-      'vs/editor/common/languages'
-    );
-    const { generateTokensCSSForColorMap } = window.require(
-      'vs/editor/common/languages/supports/tokenization'
-    );
     const colorMap = cssColors.map(Color.Format.CSS.parseHex);
 
     TokenizationRegistry.setColorMap(colorMap);
